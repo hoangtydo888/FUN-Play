@@ -57,6 +57,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        fun: {
+          yellow: "hsl(45 100% 51%)",
+        },
+        play: {
+          green: "hsl(160 84% 39%)",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
