@@ -1,4 +1,4 @@
-import { Search, Video, Bell, Menu, Play, User as UserIcon, LogOut, Settings, Radio, SquarePen, Plus } from "lucide-react";
+import { Search, Video, Bell, Menu, Play, User as UserIcon, LogOut, Settings, Radio, SquarePen, Plus, FileVideo, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MultiTokenWallet } from "@/components/Web3/MultiTokenWallet";
@@ -68,14 +68,23 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hidden md:flex">
+              <Button variant="ghost" className="hidden md:flex gap-2 px-3">
                 <Plus className="h-5 w-5" />
+                <span className="text-sm font-medium">Tạo</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem onClick={() => navigate("/upload")}>
                 <Video className="mr-2 h-4 w-4" />
                 Tải video lên
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/channel/" + user.id)}>
+                <Settings className="mr-2 h-4 w-4" />
+                Quản lý kênh
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/your-videos")}>
+                <FileVideo className="mr-2 h-4 w-4" />
+                Video của tôi
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/create-post")}>
                 <SquarePen className="mr-2 h-4 w-4" />

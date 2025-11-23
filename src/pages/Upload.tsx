@@ -50,12 +50,12 @@ export default function Upload() {
       return;
     }
 
-    // Validate file size (500MB limit)
-    const maxSize = 500 * 1024 * 1024; // 500MB
+    // Validate file size (10GB limit)
+    const maxSize = 10 * 1024 * 1024 * 1024; // 10GB
     if (videoFile.size > maxSize) {
       toast({
         title: "Video quá lớn",
-        description: "Vui lòng chọn video nhỏ hơn 500MB",
+        description: "Vui lòng chọn video nhỏ hơn 10GB",
         variant: "destructive",
       });
       return;
@@ -251,7 +251,7 @@ export default function Upload() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    MP4, WebM, hoặc AVI (tối đa 500MB)
+                    MP4, WebM, hoặc AVI (tối đa 10GB)
                   </p>
                 </div>
               )}
