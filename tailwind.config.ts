@@ -63,6 +63,9 @@ export default {
         play: {
           green: "hsl(160 84% 39%)",
         },
+        logo: {
+          bg: "hsl(var(--logo-bg))",
+        },
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

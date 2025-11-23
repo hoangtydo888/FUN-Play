@@ -36,7 +36,7 @@ export const VideoCard = ({
       {/* Info */}
       <div className="p-3 flex gap-3">
         <div className="flex-shrink-0">
-          <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-semibold text-sm">
+          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm">
             {channel[0]}
           </div>
         </div>
@@ -58,11 +58,10 @@ export const VideoCard = ({
         <Button
           onClick={onTip}
           size="sm"
-          variant="outline"
-          className="w-full gap-2 border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+          className="w-full gap-2 bg-fun-yellow text-primary-foreground hover:bg-fun-yellow/90 font-semibold"
         >
           <Coins className="h-4 w-4" />
-          <span className="text-xs font-semibold">Tip Creator</span>
+          <span className="text-xs">⚡ Tip Creator</span>
         </Button>
       </div>
     </Card>

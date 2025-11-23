@@ -78,9 +78,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <div className="px-3 py-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-6 px-3 py-2.5 h-auto hover:bg-accent"
+                className="w-full justify-start gap-6 px-3 py-2.5 h-auto hover:bg-accent text-foreground"
               >
-                <Wallet className="h-5 w-5 text-primary" />
+                <Wallet className="h-5 w-5 text-fun-yellow" />
                 <span>Wallet</span>
               </Button>
             </div>
