@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,10 +62,26 @@ export const StudioContent = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     fetchVideos();
   }, [user]);
+
+  // Handle edit query parameter from video card
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId && videos.length > 0) {
+      const videoToEdit = videos.find(v => v.id === editId);
+      if (videoToEdit) {
+        setEditingVideo(videoToEdit);
+        // Remove edit parameter from URL to clean up
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('edit');
+        setSearchParams(newParams, { replace: true });
+      }
+    }
+  }, [searchParams, videos, setSearchParams]);
 
   const fetchVideos = async () => {
     try {

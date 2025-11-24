@@ -37,7 +37,7 @@ export const VideoCard = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate('/studio?tab=content');
+    navigate(`/studio?tab=content&edit=${videoId}`);
   };
 
   return (
