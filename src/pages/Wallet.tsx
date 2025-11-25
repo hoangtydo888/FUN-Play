@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Wallet as WalletIcon, Send, History, Loader2 } from "lucide-react";
+import { Wallet as WalletIcon, Send, History, Loader2, Copy, QrCode, ExternalLink } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { sendTip, getTransactionHistory } from "@/lib/tipping";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ethers } from "ethers";
+import { QRCodeSVG } from "qrcode.react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useCryptoPrices } from "@/hooks/useCryptoPrices";
 
 interface TokenBalance {
   symbol: string;
@@ -57,6 +60,7 @@ const Wallet = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { prices, loading: pricesLoading } = useCryptoPrices();
 
   // Transfer form state
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -347,6 +351,14 @@ const Wallet = () => {
     });
   };
 
+  const copyAddress = () => {
+    navigator.clipboard.writeText(address);
+    toast({
+      title: "Đã copy",
+      description: "Địa chỉ ví đã được copy vào clipboard",
+    });
+  };
+
   if (!isConnected) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -382,9 +394,44 @@ const Wallet = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold">Ví của tôi</h1>
-              <p className="text-muted-foreground mt-1">
-                {address.slice(0, 6)}...{address.slice(-4)}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-muted-foreground">
+                  {address.slice(0, 6)}...{address.slice(-4)}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={copyAddress}
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <QrCode className="h-3 w-3" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Mã QR địa chỉ ví</DialogTitle>
+                      <DialogDescription>
+                        Quét mã này để nhận tiền vào ví của bạn
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col items-center gap-4 py-4">
+                      <QRCodeSVG value={address} size={256} />
+                      <p className="text-sm text-muted-foreground break-all text-center">
+                        {address}
+                      </p>
+                      <Button onClick={copyAddress} className="w-full">
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy địa chỉ
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
             <div className="flex gap-2">
               <Button 
@@ -459,6 +506,11 @@ const Wallet = () => {
                         <div className="text-right">
                           <p className="font-bold">{token.balance}</p>
                           <p className="text-sm text-muted-foreground">{token.symbol}</p>
+                          {prices[token.symbol] && (
+                            <p className="text-xs text-muted-foreground">
+                              ≈ ${(parseFloat(token.balance) * prices[token.symbol]).toFixed(2)} USD
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -559,33 +611,46 @@ const Wallet = () => {
                     {transactions.map((tx) => (
                       <div
                         key={tx.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
+                        className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                       >
-                        <div>
-                          <p className="font-medium">
-                            {tx.from_user_id === user?.id ? "Đã gửi" : "Đã nhận"}{" "}
-                            {tx.amount} {tx.token_type}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {tx.from_user_id === user?.id
-                              ? `Đến: ${tx.to_address.slice(0, 6)}...${tx.to_address.slice(-4)}`
-                              : `Từ: ${tx.from_address.slice(0, 6)}...${tx.from_address.slice(-4)}`}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(tx.created_at).toLocaleString("vi-VN")}
-                          </p>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">
+                                {tx.from_user_id === user?.id ? "Đã gửi" : "Đã nhận"}{" "}
+                                {tx.amount} {tx.token_type}
+                              </p>
+                              <span
+                                className={`text-xs px-2 py-1 rounded ${
+                                  tx.status === "completed"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                }`}
+                              >
+                                {tx.status === "completed" ? "Thành công" : "Thất bại"}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {tx.from_user_id === user?.id
+                                ? `Đến: ${tx.to_address.slice(0, 6)}...${tx.to_address.slice(-4)}`
+                                : `Từ: ${tx.from_address.slice(0, 6)}...${tx.from_address.slice(-4)}`}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {new Date(tx.created_at).toLocaleString("vi-VN")}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <span
-                            className={`text-xs px-2 py-1 rounded ${
-                              tx.status === "completed"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
+                        {tx.tx_hash && tx.tx_hash !== "failed" && (
+                          <a
+                            href={`https://bscscan.com/tx/${tx.tx_hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-primary hover:underline"
                           >
-                            {tx.status === "completed" ? "Thành công" : "Thất bại"}
-                          </span>
-                        </div>
+                            <ExternalLink className="h-3 w-3" />
+                            Xem trên BscScan
+                          </a>
+                        )}
                       </div>
                     ))}
                   </div>
