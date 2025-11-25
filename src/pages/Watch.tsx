@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Layout/Header";
 import { Sidebar } from "@/components/Layout/Sidebar";
@@ -36,13 +36,26 @@ interface Comment {
   };
 }
 
+interface RecommendedVideo {
+  id: string;
+  title: string;
+  thumbnail_url: string | null;
+  view_count: number | null;
+  created_at: string;
+  channels: {
+    name: string;
+  };
+}
+
 export default function Watch() {
   const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [video, setVideo] = useState<Video | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [recommendedVideos, setRecommendedVideos] = useState<RecommendedVideo[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -51,6 +64,7 @@ export default function Watch() {
     if (id) {
       fetchVideo();
       fetchComments();
+      fetchRecommendedVideos();
     }
   }, [id]);
 
@@ -126,6 +140,64 @@ export default function Watch() {
     } catch (error: any) {
       console.error("Error loading comments:", error);
     }
+  };
+
+  const fetchRecommendedVideos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("videos")
+        .select(`
+          id,
+          title,
+          thumbnail_url,
+          view_count,
+          created_at,
+          channels (
+            name
+          )
+        `)
+        .eq("is_public", true)
+        .neq("id", id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setRecommendedVideos(data || []);
+    } catch (error: any) {
+      console.error("Error loading recommended videos:", error);
+    }
+  };
+
+  const handleVideoEnd = () => {
+    // Autoplay next video
+    if (recommendedVideos.length > 0) {
+      const nextVideo = recommendedVideos[0];
+      navigate(`/watch/${nextVideo.id}`);
+      toast({
+        title: "Đang phát video tiếp theo",
+        description: nextVideo.title,
+      });
+    }
+  };
+
+  const formatViews = (views: number | null) => {
+    if (!views) return "0 lượt xem";
+    if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M lượt xem`;
+    if (views >= 1000) return `${(views / 1000).toFixed(1)}K lượt xem`;
+    return `${views} lượt xem`;
+  };
+
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Hôm nay";
+    if (diffDays === 1) return "1 ngày trước";
+    if (diffDays < 30) return `${diffDays} ngày trước`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} tháng trước`;
+    return `${Math.floor(diffDays / 365)} năm trước`;
   };
 
   const handleAddComment = async () => {
@@ -220,10 +292,12 @@ export default function Watch() {
               {/* Video Player */}
               <div className="aspect-video bg-black rounded-xl overflow-hidden">
                 <video
+                  ref={videoRef}
                   src={video.video_url}
                   controls
                   className="w-full h-full"
                   autoPlay
+                  onEnded={handleVideoEnd}
                 />
               </div>
 
@@ -381,10 +455,34 @@ export default function Watch() {
 
             {/* Recommended Videos Sidebar */}
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-foreground px-2">
-                Recommended
-              </h2>
-              {/* Recommended videos will be added here */}
+              {recommendedVideos.map((recVideo) => (
+                <div
+                  key={recVideo.id}
+                  onClick={() => navigate(`/watch/${recVideo.id}`)}
+                  className="flex gap-2 cursor-pointer group"
+                >
+                  <div className="relative flex-shrink-0 w-40 aspect-video rounded-lg overflow-hidden bg-muted">
+                    <img
+                      src={recVideo.thumbnail_url || "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=225&fit=crop"}
+                      alt={recVideo.title}
+                      className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-foreground line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+                      {recVideo.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {recVideo.channels?.name || "Unknown Channel"}
+                    </p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span>{formatViews(recVideo.view_count)}</span>
+                      <span>•</span>
+                      <span>{formatTimestamp(recVideo.created_at)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
