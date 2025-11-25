@@ -15,13 +15,34 @@ interface TokenBalance {
   symbol: string;
   balance: string;
   decimals: number;
+  icon: string;
 }
 
 const SUPPORTED_TOKENS = [
-  { symbol: "BNB", address: "native", decimals: 18 },
-  { symbol: "USDT", address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18 },
-  { symbol: "CAMLY", address: "0x", decimals: 18 }, // Replace with actual CAMLY contract
-  { symbol: "BTC", address: "0x", decimals: 18 }, // Replace with actual BTC contract (BTCB on BSC)
+  { 
+    symbol: "BNB", 
+    address: "native", 
+    decimals: 18,
+    icon: "https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=035"
+  },
+  { 
+    symbol: "USDT", 
+    address: "0x55d398326f99059fF775485246999027B3197955", 
+    decimals: 18,
+    icon: "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=035"
+  },
+  { 
+    symbol: "CAMLY", 
+    address: "0x0910320181889fefde0bb1ca63962b0a8882e413", 
+    decimals: 18,
+    icon: "https://images.unsplash.com/photo-1621504450181-5d356f61d307?w=100&h=100&fit=crop"
+  },
+  { 
+    symbol: "BTC", 
+    address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", 
+    decimals: 18,
+    icon: "https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=035"
+  },
 ];
 
 export const MultiTokenWallet = () => {
@@ -123,15 +144,30 @@ export const MultiTokenWallet = () => {
             params: [userAddress, "latest"],
           });
           const bnbBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
-          newBalances.push({ symbol: token.symbol, balance: bnbBalance, decimals: token.decimals });
+          newBalances.push({ 
+            symbol: token.symbol, 
+            balance: bnbBalance, 
+            decimals: token.decimals,
+            icon: token.icon
+          });
         } else {
           // Fetch ERC-20 token balance
           // This would require ethers.js or web3.js for proper implementation
-          newBalances.push({ symbol: token.symbol, balance: "0.0000", decimals: token.decimals });
+          newBalances.push({ 
+            symbol: token.symbol, 
+            balance: "0.0000", 
+            decimals: token.decimals,
+            icon: token.icon
+          });
         }
       } catch (error) {
         console.error(`Error fetching ${token.symbol} balance:`, error);
-        newBalances.push({ symbol: token.symbol, balance: "0.0000", decimals: token.decimals });
+        newBalances.push({ 
+          symbol: token.symbol, 
+          balance: "0.0000", 
+          decimals: token.decimals,
+          icon: token.icon
+        });
       }
     }
 
@@ -148,7 +184,7 @@ export const MultiTokenWallet = () => {
     });
   };
 
-  const currentBalance = balances.find(b => b.symbol === selectedToken)?.balance || "0.0000";
+  const currentBalance = balances.find(b => b.symbol === selectedToken);
 
   if (isConnected) {
     return (
@@ -161,8 +197,11 @@ export const MultiTokenWallet = () => {
               className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
               <Wallet className="h-4 w-4" />
+              {currentBalance && (
+                <img src={currentBalance.icon} alt={currentBalance.symbol} className="h-4 w-4 rounded-full" />
+              )}
               <span className="hidden md:inline">
-                {currentBalance} {selectedToken}
+                {currentBalance?.balance || "0.0000"} {selectedToken}
               </span>
               <ChevronDown className="h-3 w-3" />
             </Button>
@@ -181,6 +220,7 @@ export const MultiTokenWallet = () => {
                 onClick={() => setSelectedToken(token.symbol)}
                 className={selectedToken === token.symbol ? "bg-accent" : ""}
               >
+                <img src={token.icon} alt={token.symbol} className="h-5 w-5 rounded-full mr-2" />
                 <span className="font-medium">{token.symbol}</span>
                 <span className="ml-auto text-muted-foreground">{token.balance}</span>
               </DropdownMenuItem>
