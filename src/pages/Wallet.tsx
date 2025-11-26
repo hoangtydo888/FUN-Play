@@ -22,6 +22,7 @@ import { PriceChart } from "@/components/Web3/PriceChart";
 import { PortfolioTracker } from "@/components/Web3/PortfolioTracker";
 import { Badge } from "@/components/ui/badge";
 import { RichNotification } from "@/components/Web3/RichNotification";
+import camlyCoinLogo from "@/assets/camly-coin-logo.png";
 
 interface TokenBalance {
   symbol: string;
@@ -545,11 +546,28 @@ const Wallet = () => {
             boxShadow: "0 0 20px #FFD700, 0 0 40px #FFA500",
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="font-bold">💰 Lịch sử nhận:</span>
-            <span className="text-[#00FF00] font-black text-xl" style={{ textShadow: "0 0 10px #00FF00" }}>
-              {receivedCount}
-            </span>
+            <div className="relative">
+              <img 
+                src={camlyCoinLogo} 
+                alt="CAMLY Coin" 
+                className="w-8 h-8 rounded-full animate-pulse"
+                style={{
+                  boxShadow: "0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 165, 0, 0.6)",
+                  filter: "drop-shadow(0 0 10px #FFD700)",
+                }}
+              />
+              <span 
+                className="absolute -top-1 -right-1 text-[#00FF00] font-black text-sm bg-background rounded-full w-5 h-5 flex items-center justify-center" 
+                style={{ 
+                  textShadow: "0 0 10px #00FF00",
+                  boxShadow: "0 0 10px #00FF00",
+                }}
+              >
+                {receivedCount}
+              </span>
+            </div>
           </div>
         </motion.div>
       )}
@@ -642,12 +660,28 @@ const Wallet = () => {
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="history">Lịch sử</TabsTrigger>
             <TabsTrigger value="received">
-              Lịch sử nhận
-              {receivedCount > 0 && (
-                <Badge variant="default" className="ml-2 bg-[#00FF00] text-background hover:bg-[#00FF00]" style={{ boxShadow: "0 0 10px #00FF00" }}>
-                  {receivedCount}
-                </Badge>
-              )}
+              <div className="flex items-center gap-2">
+                <span>Lịch sử nhận</span>
+                {receivedCount > 0 && (
+                  <div className="relative">
+                    <img 
+                      src={camlyCoinLogo} 
+                      alt="CAMLY" 
+                      className="w-5 h-5 rounded-full"
+                      style={{ filter: "drop-shadow(0 0 5px #FFD700)" }}
+                    />
+                    <span 
+                      className="absolute -top-1 -right-1 text-[#00FF00] font-bold text-[10px] bg-background rounded-full w-4 h-4 flex items-center justify-center" 
+                      style={{ 
+                        textShadow: "0 0 5px #00FF00",
+                        boxShadow: "0 0 5px #00FF00",
+                      }}
+                    >
+                      {receivedCount}
+                    </span>
+                  </div>
+                )}
+              </div>
             </TabsTrigger>
           </TabsList>
 
