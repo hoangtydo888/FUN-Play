@@ -19,6 +19,7 @@ import { TokenSwap } from "@/components/Web3/TokenSwap";
 import { PriceChart } from "@/components/Web3/PriceChart";
 import { PortfolioTracker } from "@/components/Web3/PortfolioTracker";
 import { Badge } from "@/components/ui/badge";
+import { RichNotification } from "@/components/Web3/RichNotification";
 
 interface TokenBalance {
   symbol: string;
@@ -71,10 +72,49 @@ const Wallet = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedToken, setSelectedToken] = useState("BNB");
+  const [previousBalances, setPreviousBalances] = useState<TokenBalance[]>([]);
+  const [showRichNotification, setShowRichNotification] = useState(false);
+  const [receivedAmount, setReceivedAmount] = useState("");
+  const [receivedToken, setReceivedToken] = useState("");
 
   useEffect(() => {
     checkWalletConnection();
   }, []);
+
+  // Real-time monitoring for incoming transactions
+  useEffect(() => {
+    if (!user || !address) return;
+
+    const channel = supabase
+      .channel('wallet-transactions')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'wallet_transactions',
+          filter: `to_address=eq.${address.toLowerCase()}`
+        },
+        (payload) => {
+          console.log('New transaction received:', payload);
+          const transaction = payload.new;
+          
+          // Show Rich notification
+          setReceivedAmount(transaction.amount.toString());
+          setReceivedToken(transaction.token_type);
+          setShowRichNotification(true);
+
+          // Refresh balances and transaction history
+          fetchBalances(address);
+          loadTransactionHistory();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, address]);
 
   useEffect(() => {
     if (user) {
@@ -271,6 +311,21 @@ const Wallet = () => {
       });
     }
 
+    // Check for balance increases (incoming funds)
+    if (previousBalances.length > 0) {
+      newBalances.forEach(newBal => {
+        const prevBal = previousBalances.find(pb => pb.symbol === newBal.symbol);
+        if (prevBal && parseFloat(newBal.balance) > parseFloat(prevBal.balance)) {
+          const increase = (parseFloat(newBal.balance) - parseFloat(prevBal.balance)).toFixed(6);
+          // Show Rich notification for balance increase
+          setReceivedAmount(increase);
+          setReceivedToken(newBal.symbol);
+          setShowRichNotification(true);
+        }
+      });
+    }
+    
+    setPreviousBalances(newBalances);
     setBalances(newBalances);
     setLoading(false);
   };
@@ -395,6 +450,13 @@ const Wallet = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <RichNotification
+        show={showRichNotification}
+        amount={receivedAmount}
+        token={receivedToken}
+        onClose={() => setShowRichNotification(false)}
+      />
+      
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
