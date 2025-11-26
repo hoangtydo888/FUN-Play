@@ -26,8 +26,8 @@ import { wagmiConfig } from '@/lib/web3Config';
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <WagmiProvider config={wagmiConfig}>
+  <WagmiProvider config={wagmiConfig}>
+    <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -64,8 +64,8 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-    </WagmiProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
 
 export default App;
