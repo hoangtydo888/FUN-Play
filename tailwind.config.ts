@@ -57,24 +57,22 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        fun: {
-          yellow: "hsl(45 100% 51%)",
+        cosmic: {
+          cyan: "hsl(var(--cosmic-cyan))",
+          purple: "hsl(var(--cosmic-purple))",
+          magenta: "hsl(var(--cosmic-magenta))",
+          gold: "hsl(var(--cosmic-gold))",
         },
-        play: {
-          green: "hsl(160 84% 39%)",
+        divine: {
+          pink: "hsl(var(--divine-pink))",
+          orange: "hsl(var(--divine-orange))",
+          lavender: "hsl(var(--divine-lavender))",
         },
-        logo: {
-          bg: "hsl(var(--logo-bg))",
-        },
-        hover: {
-          blue: "hsl(var(--hover-blue))",
-          "blue-dark": "hsl(var(--hover-blue-dark))",
-          yellow: "hsl(var(--hover-yellow))",
-          "yellow-dark": "hsl(var(--hover-yellow-dark))",
-        },
-        text: {
-          blue: "hsl(var(--text-blue))",
-          "blue-dark": "hsl(var(--text-blue-dark))",
+        glow: {
+          gold: "hsl(var(--glow-gold))",
+          magenta: "hsl(var(--glow-magenta))",
+          cyan: "hsl(var(--glow-cyan))",
+          white: "hsl(var(--glow-white))",
         },
       },
       fontFamily: {

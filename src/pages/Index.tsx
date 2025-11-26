@@ -133,20 +133,33 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Floating cosmic particles */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-glow-gold rounded-full particle opacity-60 blur-sm" />
+        <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-glow-cyan rounded-full particle opacity-50 blur-sm" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-1/4 left-1/3 w-2.5 h-2.5 bg-glow-magenta rounded-full particle opacity-70 blur-sm" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 right-1/4 w-2 h-2 bg-glow-white rounded-full particle opacity-40 blur-sm" style={{ animationDelay: '3s' }} />
+        <div className="absolute bottom-1/3 right-1/2 w-3 h-3 bg-cosmic-purple rounded-full particle opacity-50 blur-sm" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-2/3 left-1/2 w-2 h-2 bg-divine-lavender rounded-full particle opacity-60 blur-sm" style={{ animationDelay: '2.5s' }} />
+      </div>
+
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
       {/* Main content */}
-      <main className="pt-14 lg:pl-64">
+      <main className="pt-14 lg:pl-64 relative z-10">
         <CategoryChips />
         {!user && (
-          <div className="bg-primary/10 border-b border-primary/20 p-4">
+          <div className="glass-card mx-4 mt-4 rounded-xl border border-cosmic-purple/30 p-4 shadow-[0_0_30px_rgba(122,43,255,0.3)]">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <p className="text-foreground">
-                Join FUN PLAY to upload videos, subscribe to channels, and tip creators!
+              <p className="text-foreground font-medium">
+                Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-cosmic-cyan via-cosmic-purple to-cosmic-magenta font-bold">FunPlay</span> to upload videos, subscribe to channels, and tip creators!
               </p>
-              <Button onClick={() => navigate("/auth")} variant="default">
+              <Button 
+                onClick={() => navigate("/auth")} 
+                className="bg-gradient-to-r from-cosmic-cyan via-cosmic-purple to-cosmic-magenta hover:shadow-[0_0_40px_rgba(122,43,255,0.6)] transition-all duration-500 border border-glow-white/20"
+              >
                 Sign In
               </Button>
             </div>
@@ -155,12 +168,12 @@ const Index = () => {
         
         <div className="p-6">
           {videos.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">Chưa có video nào</p>
-              <p className="text-sm text-muted-foreground mt-2">Hãy tải video đầu tiên lên!</p>
+            <div className="text-center py-20 glass-card rounded-2xl mx-auto max-w-2xl">
+              <p className="text-foreground text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cosmic-cyan to-cosmic-magenta">Chưa có video nào</p>
+              <p className="text-sm text-muted-foreground mt-2">Hãy tải video đầu tiên lên và khám phá vũ trụ âm nhạc!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {videos.map((video) => (
                 <VideoCard
                   key={video.id}

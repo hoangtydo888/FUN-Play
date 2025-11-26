@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold ring-offset-background transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-hover-yellow hover:text-primary hover:border-hover-yellow transition-all duration-300",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-hover-yellow hover:text-primary transition-all duration-300",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "bg-gradient-to-r from-cosmic-purple via-cosmic-magenta to-cosmic-gold text-white shadow-[0_0_20px_rgba(122,43,255,0.4)] hover:shadow-[0_0_40px_rgba(122,43,255,0.6)] hover:scale-105 border border-white/20",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-[0_0_15px_rgba(239,68,68,0.4)]",
+        outline: "border-2 border-cosmic-purple/50 bg-transparent hover:bg-cosmic-purple/20 hover:border-cosmic-gold hover:shadow-[0_0_25px_rgba(255,215,0,0.5)] transition-all duration-500",
+        secondary: "bg-gradient-to-r from-divine-pink to-divine-orange text-white shadow-[0_0_15px_rgba(255,59,154,0.4)] hover:shadow-[0_0_30px_rgba(255,59,154,0.6)]",
+        ghost: "hover:bg-cosmic-purple/20 hover:text-cosmic-gold hover:shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all duration-500",
+        link: "text-cosmic-cyan underline-offset-4 hover:underline hover:text-cosmic-magenta transition-colors duration-300",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-11 px-6 py-2",
+        sm: "h-9 rounded-lg px-4",
+        lg: "h-13 rounded-lg px-10 text-base",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {
