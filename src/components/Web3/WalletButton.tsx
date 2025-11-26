@@ -1,102 +1,114 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { getWeb3Modal } from "@/lib/web3Config";
+import { getAccount, watchAccount, switchChain } from '@wagmi/core';
+import { wagmiConfig } from '@/lib/web3Config';
+import { bsc } from '@wagmi/core/chains';
 
 export const WalletButton = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [address, setAddress] = useState<string>("");
   const { toast } = useToast();
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const connectWallet = async () => {
-    if (typeof window.ethereum === "undefined") {
-      toast({
-        title: "MetaMask Not Found",
-        description: "Please install MetaMask to use Web3 features",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Request account access
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      // Check if on BSC Mainnet (chainId: 56)
-      const chainId = await window.ethereum.request({ method: "eth_chainId" });
-      
-      if (chainId !== "0x38") {
-        // Try to switch to BSC Mainnet
-        try {
-          await window.ethereum.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0x38" }],
-          });
-        } catch (switchError: any) {
-          // This error code indicates that the chain has not been added to MetaMask
-          if (switchError.code === 4902) {
-            try {
-              await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                  {
-                    chainId: "0x38",
-                    chainName: "Binance Smart Chain",
-                    nativeCurrency: {
-                      name: "BNB",
-                      symbol: "BNB",
-                      decimals: 18,
-                    },
-                    rpcUrls: ["https://bsc-dataseed.binance.org/"],
-                    blockExplorerUrls: ["https://bscscan.com/"],
-                  },
-                ],
-              });
-            } catch (addError) {
-              toast({
-                title: "Network Error",
-                description: "Failed to add BSC network",
-                variant: "destructive",
-              });
-              return;
-            }
-          } else {
-            toast({
-              title: "Network Error",
-              description: "Please switch to BSC Mainnet",
-              variant: "destructive",
-            });
-            return;
+  // Initialize Web3Modal and watch for account changes
+  useEffect(() => {
+    const initWeb3 = async () => {
+      try {
+        getWeb3Modal();
+        
+        // Check initial connection
+        const account = getAccount(wagmiConfig);
+        if (account.address && account.isConnected) {
+          setAddress(account.address);
+          setIsConnected(true);
+          
+          // Ensure BSC chain
+          if (account.chainId !== bsc.id) {
+            await switchChain(wagmiConfig, { chainId: bsc.id });
           }
         }
+        
+        setIsInitialized(true);
+      } catch (error) {
+        console.error("Web3 init error:", error);
+        setIsInitialized(true);
       }
+    };
 
-      setAddress(accounts[0]);
-      setIsConnected(true);
-      
-      toast({
-        title: "Wallet Connected",
-        description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
-      });
+    initWeb3();
+
+    // Watch for account changes
+    const unwatch = watchAccount(wagmiConfig, {
+      onChange(account) {
+        if (account.address && account.isConnected) {
+          setAddress(account.address);
+          setIsConnected(true);
+          
+          // Auto-switch to BSC if needed
+          if (account.chainId !== bsc.id) {
+            switchChain(wagmiConfig, { chainId: bsc.id }).catch(console.error);
+          }
+        } else {
+          setAddress("");
+          setIsConnected(false);
+        }
+      },
+    });
+
+    return () => unwatch();
+  }, []);
+
+  const connectWallet = async () => {
+    try {
+      const modal = getWeb3Modal();
+      if (modal) {
+        await modal.open();
+        
+        toast({
+          title: "Kết nối ví",
+          description: "Chọn MetaMask hoặc Bitget Wallet để kết nối",
+        });
+      }
     } catch (error: any) {
       toast({
-        title: "Connection Failed",
-        description: error.message || "Failed to connect wallet",
+        title: "Lỗi kết nối",
+        description: error.message || "Không thể kết nối ví",
         variant: "destructive",
       });
     }
   };
 
-  const disconnectWallet = () => {
-    setIsConnected(false);
-    setAddress("");
-    toast({
-      title: "Wallet Disconnected",
-      description: "Your wallet has been disconnected",
-    });
+  const disconnectWallet = async () => {
+    try {
+      const modal = getWeb3Modal();
+      if (modal) {
+        await modal.open();
+      }
+      
+      toast({
+        title: "Ngắt kết nối ví",
+        description: "Ví của bạn đã được ngắt kết nối",
+      });
+    } catch (error) {
+      console.error("Disconnect error:", error);
+    }
   };
+
+  if (!isInitialized) {
+    return (
+      <Button
+        disabled
+        size="sm"
+        className="gap-2"
+      >
+        <Wallet className="h-4 w-4 animate-pulse" />
+        <span className="hidden md:inline">Đang tải...</span>
+      </Button>
+    );
+  }
 
   if (isConnected) {
     return (
@@ -121,14 +133,8 @@ export const WalletButton = () => {
       className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
     >
       <Wallet className="h-4 w-4" />
-      <span className="hidden md:inline">Connect Wallet</span>
+      <span className="hidden md:inline">Kết nối ví</span>
     </Button>
   );
 };
 
-// Extend Window interface for TypeScript
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
