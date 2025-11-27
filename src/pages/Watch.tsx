@@ -21,6 +21,7 @@ interface Video {
   like_count: number;
   dislike_count: number;
   created_at: string;
+  user_id: string;
   channels: {
     id: string;
     name: string;
@@ -701,9 +702,9 @@ export default function Watch() {
       <TipModal
         open={tipModalOpen}
         onOpenChange={setTipModalOpen}
-        creatorAddress={video?.channels.id}
         videoId={id}
         creatorName={video?.channels.name || ""}
+        channelUserId={video?.user_id}
       />
     </div>
   );

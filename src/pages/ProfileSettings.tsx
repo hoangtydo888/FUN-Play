@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import { Header } from "@/components/Layout/Header";
@@ -19,8 +20,18 @@ export default function ProfileSettings() {
   const [walletAddress, setWalletAddress] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [bio, setBio] = useState("");
+  const [voiceGender, setVoiceGender] = useState("female");
+  const [voicePitch, setVoicePitch] = useState("high");
   const [saving, setSaving] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    // Load voice settings from localStorage
+    const savedGender = localStorage.getItem("voiceGender") || "female";
+    const savedPitch = localStorage.getItem("voicePitch") || "high";
+    setVoiceGender(savedGender);
+    setVoicePitch(savedPitch);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -77,14 +88,18 @@ export default function ProfileSettings() {
 
       if (error) throw error;
 
+      // Save voice settings to localStorage
+      localStorage.setItem("voiceGender", voiceGender);
+      localStorage.setItem("voicePitch", voicePitch);
+
       toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully!",
+        title: "Đã cập nhật",
+        description: "Cài đặt của bạn đã được lưu thành công!",
       });
     } catch (error: any) {
       toast({
-        title: "Update Failed",
-        description: error.message || "Failed to update profile",
+        title: "Cập nhật thất bại",
+        description: error.message || "Không thể cập nhật thông tin",
         variant: "destructive",
       });
     } finally {
@@ -181,6 +196,47 @@ export default function ProfileSettings() {
                 <p className="text-xs text-muted-foreground mt-1">
                   Write a short bio for your channel
                 </p>
+              </div>
+
+              <div className="border-t border-border pt-6 mt-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Cài đặt thông báo giọng nói "RICH"
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="voiceGender">Giọng nói</Label>
+                    <Select value={voiceGender} onValueChange={setVoiceGender}>
+                      <SelectTrigger id="voiceGender">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="female">Nữ (Baby Angel)</SelectItem>
+                        <SelectItem value="male">Nam</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Chọn giọng nói cho thông báo nhận tiền
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="voicePitch">Độ cao giọng</Label>
+                    <Select value={voicePitch} onValueChange={setVoicePitch}>
+                      <SelectTrigger id="voicePitch">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="high">Cao (2.0)</SelectItem>
+                        <SelectItem value="medium">Trung bình (1.5)</SelectItem>
+                        <SelectItem value="low">Thấp (1.0)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Điều chỉnh độ cao của giọng nói
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">

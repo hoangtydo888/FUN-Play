@@ -15,14 +15,49 @@ export const RichNotification = ({ show, amount, token, count, onClose }: RichNo
     if (show) {
       // Play cute baby Aliens Angel voice saying "RICH RICH RICH"
       const speakNotification = () => {
+        // Get voice settings from localStorage
+        const voiceGender = localStorage.getItem("voiceGender") || "female";
+        const voicePitch = localStorage.getItem("voicePitch") || "high";
+        
         const utterance = new SpeechSynthesisUtterance("RICH RICH RICH");
-        utterance.pitch = 2.0; // Very high pitch for cute baby angel voice
+        
+        // Set pitch based on user preference
+        if (voicePitch === "high") {
+          utterance.pitch = 2.0;
+        } else if (voicePitch === "medium") {
+          utterance.pitch = 1.5;
+        } else {
+          utterance.pitch = 1.0;
+        }
+        
         utterance.rate = 0.9; // Slightly slower for cuteness
         utterance.volume = 1;
         utterance.lang = 'en-US'; // English for "RICH"
+        
+        // Try to select voice based on gender preference
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          const preferredVoice = voices.find(voice => 
+            voiceGender === "female" 
+              ? voice.name.toLowerCase().includes("female") || voice.name.toLowerCase().includes("samantha")
+              : voice.name.toLowerCase().includes("male") || voice.name.toLowerCase().includes("alex")
+          );
+          if (preferredVoice) {
+            utterance.voice = preferredVoice;
+          }
+        }
+        
         window.speechSynthesis.speak(utterance);
       };
-      speakNotification();
+      
+      // Wait for voices to load if not already loaded
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          speakNotification();
+        };
+      } else {
+        speakNotification();
+      }
 
       // Trigger massive confetti celebration
       const duration = 5000;
