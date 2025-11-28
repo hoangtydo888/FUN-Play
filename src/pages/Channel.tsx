@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BackgroundMusicPlayer } from "@/components/BackgroundMusicPlayer";
 import { Copy, QrCode, Share2 } from "lucide-react";
+import { Honobar } from "@/components/Layout/Honobar";
 import { QRCodeSVG } from "qrcode.react";
 import {
   DropdownMenu,
@@ -303,10 +304,11 @@ export default function Channel() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Honobar />
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="pt-14 lg:pl-64">
+      <main className="pt-28 lg:pl-64">
         {profile?.music_enabled && profile.background_music_url && (
           <BackgroundMusicPlayer musicUrl={profile.background_music_url} />
         )}

@@ -35,7 +35,7 @@ function AppContent() {
     <>
       <Honobar />
       <GlobalPaymentNotifications />
-      <div className="pt-24 md:pt-28">
+      <div className="pt-14 md:pt-16">
         <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
