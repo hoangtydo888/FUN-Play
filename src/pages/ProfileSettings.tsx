@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import { Header } from "@/components/Layout/Header";
+import { DragDropImageUpload } from "@/components/Profile/DragDropImageUpload";
 
 export default function ProfileSettings() {
   const { user, loading } = useAuth();
@@ -196,35 +197,23 @@ export default function ProfileSettings() {
                 </p>
               </div>
 
-              <div>
-                <Label htmlFor="avatarUrl">Ảnh đại diện (Avatar URL)</Label>
-                <Input
-                  id="avatarUrl"
-                  type="url"
-                  placeholder="https://..."
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="mt-1"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Link đến ảnh đại diện của bạn
-                </p>
-              </div>
+              <DragDropImageUpload
+                currentImageUrl={avatarUrl}
+                onImageUploaded={(url) => setAvatarUrl(url)}
+                label="Ảnh đại diện (Avatar)"
+                aspectRatio="aspect-square"
+                folderPath="avatars"
+                maxSizeMB={5}
+              />
 
-              <div>
-                <Label htmlFor="bannerUrl">Ảnh bìa trang chủ (Banner URL)</Label>
-                <Input
-                  id="bannerUrl"
-                  type="url"
-                  placeholder="https://..."
-                  value={bannerUrl}
-                  onChange={(e) => setBannerUrl(e.target.value)}
-                  className="mt-1"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Link đến ảnh bìa kênh của bạn (khuyến nghị: 1920x480px)
-                </p>
-              </div>
+              <DragDropImageUpload
+                currentImageUrl={bannerUrl}
+                onImageUploaded={(url) => setBannerUrl(url)}
+                label="Ảnh bìa trang chủ (Banner)"
+                aspectRatio="aspect-[16/9]"
+                folderPath="banners"
+                maxSizeMB={10}
+              />
 
               <div>
                 <Label htmlFor="bio">Bio</Label>
