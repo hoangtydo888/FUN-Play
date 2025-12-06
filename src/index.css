@@ -171,109 +171,13 @@ All colors MUST be HSL.
 
   body {
     @apply text-foreground;
-    background: 
-      /* Aurora glow from top-right */
-      radial-gradient(ellipse at 90% 0%, hsl(187 100% 45% / 0.12) 0%, transparent 50%),
-      /* Purple aurora glow left */
-      radial-gradient(ellipse at 10% 30%, hsl(263 100% 58% / 0.1) 0%, transparent 50%),
-      /* Magenta glow bottom */
-      radial-gradient(ellipse at 50% 100%, hsl(312 100% 50% / 0.08) 0%, transparent 50%),
-      /* Golden divine light center */
-      radial-gradient(ellipse at 50% 50%, hsl(45 100% 50% / 0.05) 0%, transparent 60%),
-      /* Pure white base with subtle lavender tint */
-      linear-gradient(180deg, 
-        hsl(0 0% 100%) 0%, 
-        hsl(270 50% 99%) 50%, 
-        hsl(0 0% 100%) 100%
-      );
-    background-attachment: fixed;
-    position: relative;
+    background: hsl(0 0% 100%);
     min-height: 100vh;
-  }
-  
-  /* Floating aurora sparkles */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-      radial-gradient(2px 2px at 15% 20%, hsl(187 100% 45% / 0.7), transparent),
-      radial-gradient(2px 2px at 35% 45%, hsl(263 100% 58% / 0.6), transparent),
-      radial-gradient(2px 2px at 55% 25%, hsl(312 100% 50% / 0.5), transparent),
-      radial-gradient(2px 2px at 75% 55%, hsl(45 100% 50% / 0.7), transparent),
-      radial-gradient(1.5px 1.5px at 25% 70%, hsl(0 100% 60% / 0.4), transparent),
-      radial-gradient(1.5px 1.5px at 45% 85%, hsl(30 100% 55% / 0.5), transparent),
-      radial-gradient(2px 2px at 65% 15%, hsl(120 100% 40% / 0.4), transparent),
-      radial-gradient(1.5px 1.5px at 85% 75%, hsl(220 100% 55% / 0.5), transparent),
-      radial-gradient(2px 2px at 5% 50%, hsl(280 100% 60% / 0.4), transparent),
-      radial-gradient(2px 2px at 95% 35%, hsl(187 100% 45% / 0.6), transparent);
-    background-repeat: repeat;
-    background-size: 600px 300px;
-    pointer-events: none;
-    z-index: 0;
-    animation: aurora-sparkle 6s ease-in-out infinite alternate;
-  }
-  
-  @keyframes aurora-sparkle {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.7; }
-    100% { opacity: 0.4; }
   }
   
   body > * {
     position: relative;
     z-index: 1;
-  }
-
-  /* Divine rainbow light rays from center */
-  body::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 150vmax;
-    height: 150vmax;
-    background: 
-      conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        hsl(187 100% 45% / 0.04) 15deg,
-        transparent 30deg,
-        hsl(263 100% 58% / 0.03) 45deg,
-        transparent 60deg,
-        hsl(312 100% 50% / 0.04) 75deg,
-        transparent 90deg,
-        hsl(45 100% 50% / 0.03) 105deg,
-        transparent 120deg,
-        hsl(0 100% 60% / 0.02) 135deg,
-        transparent 150deg,
-        hsl(30 100% 55% / 0.03) 165deg,
-        transparent 180deg,
-        hsl(120 100% 40% / 0.02) 195deg,
-        transparent 210deg,
-        hsl(220 100% 55% / 0.03) 225deg,
-        transparent 240deg,
-        hsl(280 100% 60% / 0.02) 255deg,
-        transparent 270deg,
-        hsl(187 100% 45% / 0.03) 285deg,
-        transparent 300deg,
-        hsl(263 100% 58% / 0.02) 315deg,
-        transparent 330deg,
-        hsl(312 100% 50% / 0.03) 345deg,
-        transparent 360deg
-      );
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 0;
-    animation: rotate-aurora-rays 90s linear infinite;
-  }
-  
-  @keyframes rotate-aurora-rays {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
   }
 }
 
@@ -306,42 +210,18 @@ All colors MUST be HSL.
   100% { border-color: hsl(216 100% 50%); box-shadow: 0 0 40px hsl(216 100% 50% / 1); }
 }
 
-/* Glassmorphism utility classes - Heavenly Aurora Bliss Theme */
+/* Glass card - Clean white style */
 .glass-card {
-  background: linear-gradient(135deg, 
-    hsl(0 0% 100% / 0.95), 
-    hsl(270 50% 99% / 0.9),
-    hsl(0 0% 100% / 0.95)
-  );
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid hsl(270 30% 90%);
-  box-shadow: 
-    0 4px 20px hsl(187 100% 45% / 0.1),
-    0 8px 40px hsl(263 100% 58% / 0.08),
-    inset 0 1px 0 hsl(0 0% 100% / 0.8);
-  transition: var(--transition-glow);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Aurora gradient top border */
-.glass-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #00E7FF, #7A2BFF, #FF00E5, #FFD700);
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(270 30% 92%);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.06);
+  transition: all 0.2s ease;
 }
 
 .glass-card:hover {
-  box-shadow: 
-    0 8px 30px hsl(187 100% 45% / 0.2),
-    0 16px 60px hsl(263 100% 58% / 0.15),
-    0 0 80px hsl(312 100% 50% / 0.1),
-    inset 0 1px 0 hsl(0 0% 100% / 0.9);
-  transform: translateY(-4px);
+  box-shadow: 0 4px 16px hsl(0 0% 0% / 0.1);
+  transform: translateY(-2px);
 }
 
 /* Holographic foil texture */
