@@ -43,13 +43,13 @@ All colors MUST be HSL.
 
     --radius: 1rem;
 
-    --sidebar-background: 270 50% 99%;
+    --sidebar-background: 270 60% 97%; /* Light lavender/pink */
     --sidebar-foreground: 240 10% 20%;
-    --sidebar-primary: 187 100% 45%;
+    --sidebar-primary: 312 100% 60%; /* Magenta/pink for active links */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 30% 96%;
+    --sidebar-accent: 270 50% 95%; /* Lavender accent */
     --sidebar-accent-foreground: 240 10% 20%;
-    --sidebar-border: 270 30% 90%;
+    --sidebar-border: 270 40% 90%;
     --sidebar-ring: 187 100% 45%;
 
     /* Heavenly Aurora Bliss Palette */
