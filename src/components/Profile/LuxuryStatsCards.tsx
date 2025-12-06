@@ -26,63 +26,50 @@ export const LuxuryStatsCards = ({
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.label}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-          whileHover={{ scale: 1.05, y: -5 }}
+          transition={{ delay: index * 0.05 }}
+          whileHover={{ scale: 1.03, y: -2 }}
           className="relative group"
         >
-          {/* Glassmorphism card */}
           <div 
-            className="relative overflow-hidden rounded-xl p-4 backdrop-blur-xl border border-white/20"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-            }}
+            className="relative overflow-hidden rounded-xl p-3 bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg shadow-purple-200/30"
           >
             {/* Glow effect on hover */}
             <motion.div
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
               style={{
-                background: `radial-gradient(circle at center, ${stat.glow}33, transparent 70%)`,
+                background: `radial-gradient(circle at center, ${stat.glow}22, transparent 70%)`,
               }}
             />
 
             {/* Icon */}
-            <motion.div
-              className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3`}
-              whileHover={{
-                boxShadow: `0 0 20px ${stat.glow}`,
-              }}
-            >
-              <stat.icon className="w-5 h-5 text-white" />
-            </motion.div>
+            <div className="flex items-center gap-2 mb-1">
+              <motion.div
+                className={`w-8 h-8 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}
+                whileHover={{
+                  boxShadow: `0 0 15px ${stat.glow}`,
+                }}
+              >
+                <stat.icon className="w-4 h-4 text-white" />
+              </motion.div>
+              <div className="text-xs text-gray-600 font-medium">
+                {stat.label}
+              </div>
+            </div>
 
             {/* Value */}
-            <div className="text-2xl font-black text-foreground">
+            <div className="text-lg font-bold text-gray-800">
               <CounterAnimation 
                 value={stat.value} 
                 suffix={stat.suffix}
-                duration={1500}
+                duration={1200}
               />
             </div>
-
-            {/* Label */}
-            <div className="text-xs text-muted-foreground font-medium">
-              {stat.label}
-            </div>
-
-            {/* Decorative corner */}
-            <div 
-              className="absolute top-0 right-0 w-16 h-16 opacity-20"
-              style={{
-                background: `linear-gradient(135deg, ${stat.glow}, transparent)`,
-                borderRadius: '0 0.75rem 0 100%',
-              }}
-            />
           </div>
         </motion.div>
       ))}

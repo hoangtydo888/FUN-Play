@@ -55,112 +55,72 @@ export const EarningMechanics = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
+      className="space-y-3"
     >
-      <h3 className="text-xl font-bold bg-gradient-to-r from-[hsl(var(--cosmic-cyan))] to-[hsl(var(--cosmic-magenta))] bg-clip-text text-transparent">
+      <h3 className="text-lg font-bold text-gray-800">
         Earning Breakdown
       </h3>
 
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         {earnings.map((earning, index) => (
           <motion.div
             key={earning.title}
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.02, x: 5 }}
-            className="relative overflow-hidden rounded-xl p-4 backdrop-blur-xl border border-white/10"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))',
-            }}
+            transition={{ delay: index * 0.05 }}
+            whileHover={{ scale: 1.01, x: 3 }}
+            className="relative overflow-hidden rounded-lg p-3 bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm"
           >
-            {/* Glow on left */}
+            {/* Accent left border */}
             <div
-              className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
-              style={{ background: `linear-gradient(to bottom, ${earning.glow}, transparent)` }}
+              className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-lg"
+              style={{ background: earning.glow }}
             />
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* Icon */}
-              <motion.div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${earning.color} flex items-center justify-center flex-shrink-0`}
-                whileHover={{
-                  boxShadow: `0 0 25px ${earning.glow}`,
-                  scale: 1.1,
-                }}
+              <div
+                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${earning.color} flex items-center justify-center flex-shrink-0 shadow-sm`}
               >
-                <earning.icon className="w-6 h-6 text-white" />
-              </motion.div>
+                <earning.icon className="w-4 h-4 text-white" />
+              </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-foreground">{earning.title}</div>
-                <div className="text-xs text-muted-foreground truncate">{earning.description}</div>
+                <div className="font-semibold text-gray-800 text-sm">{earning.title}</div>
+                <div className="text-xs text-gray-500 truncate">{earning.description}</div>
               </div>
 
               {/* Earned amount */}
               <div className="text-right">
-                <motion.div
-                  className="text-lg font-black text-[hsl(var(--cosmic-gold))]"
-                  animate={earning.earned > 0 ? {
-                    textShadow: [
-                      '0 0 5px rgba(255,215,0,0.3)',
-                      '0 0 15px rgba(255,215,0,0.5)',
-                      '0 0 5px rgba(255,215,0,0.3)',
-                    ],
-                  } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  +<CounterAnimation value={earning.earned} duration={1000} />
-                </motion.div>
-                <div className="text-xs text-muted-foreground">CAMLY</div>
+                <div className="text-base font-bold text-amber-600">
+                  +<CounterAnimation value={earning.earned} duration={800} />
+                </div>
+                <div className="text-xs text-gray-400">CAMLY</div>
               </div>
             </div>
-
-            {/* Referral badge */}
-            {earning.isReferral && referralCount > 0 && (
-              <motion.div
-                className="absolute top-2 right-2"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <div className="px-2 py-1 rounded-full bg-[hsl(var(--cosmic-magenta)/0.2)] border border-[hsl(var(--cosmic-magenta)/0.5)] text-xs font-bold text-[hsl(var(--cosmic-magenta))]">
-                  5% LIFETIME
-                </div>
-              </motion.div>
-            )}
           </motion.div>
         ))}
       </div>
 
       {/* Total summary */}
       <motion.div
-        className="p-4 rounded-xl bg-gradient-to-r from-[hsl(var(--cosmic-gold)/0.1)] to-[hsl(var(--cosmic-cyan)/0.1)] border border-[hsl(var(--cosmic-gold)/0.3)]"
-        whileHover={{ scale: 1.02 }}
+        className="p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200"
+        whileHover={{ scale: 1.01 }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-[hsl(var(--cosmic-gold))]" />
-            <span className="font-bold text-foreground">Total Earnings</span>
+            <TrendingUp className="w-4 h-4 text-amber-600" />
+            <span className="font-semibold text-gray-800 text-sm">Total Earnings</span>
           </div>
-          <motion.div
-            className="text-2xl font-black text-[hsl(var(--cosmic-gold))]"
-            animate={{
-              textShadow: [
-                '0 0 10px rgba(255,215,0,0.5)',
-                '0 0 20px rgba(255,215,0,0.7)',
-                '0 0 10px rgba(255,215,0,0.5)',
-              ],
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
+          <div className="text-lg font-bold text-amber-600">
             <CounterAnimation 
               value={uploadRewards + viewRewards + commentRewards + referralRewards} 
-              duration={1500} 
+              duration={1200} 
             /> CAMLY
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </motion.div>

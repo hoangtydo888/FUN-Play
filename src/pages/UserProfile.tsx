@@ -12,7 +12,7 @@ import { LuxuryStatsCards } from "@/components/Profile/LuxuryStatsCards";
 import { RewardZone } from "@/components/Profile/RewardZone";
 import { EarningMechanics } from "@/components/Profile/EarningMechanics";
 import { ProfileActionButtons } from "@/components/Profile/ProfileActionButtons";
-import { StarfieldBackground } from "@/components/Profile/StarfieldBackground";
+
 import { KYCButton } from "@/components/Profile/KYCButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -165,14 +165,11 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Starfield Background */}
-      <StarfieldBackground />
-
+    <div className="min-h-screen relative overflow-hidden bg-background">
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="pt-20 pb-8 lg:pl-64 relative z-10">
+      <main className="pt-16 pb-8 lg:pl-64 relative z-10">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
           {/* Profile Header Section */}
           <motion.div
