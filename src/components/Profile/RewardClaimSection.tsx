@@ -359,23 +359,51 @@ export const RewardClaimSection = ({ userId, isOwnProfile = false }: RewardClaim
                     {claimableBalance.toLocaleString()} CAMLY
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Enter your BSC wallet address to receive rewards
+                    Confirm your BSC wallet address to receive rewards
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-amber-300">Wallet Address</label>
-                  <Input
-                    value={inputWallet}
-                    onChange={(e) => setInputWallet(e.target.value)}
-                    placeholder="0x..."
-                    className="font-mono bg-black/30 border-amber-500/30 focus:border-amber-400"
-                  />
-                </div>
+                {/* Compact wallet display */}
+                {inputWallet && /^0x[a-fA-F0-9]{40}$/.test(inputWallet) ? (
+                  <div className="flex items-center justify-center gap-3 p-3 rounded-xl bg-black/30 border border-emerald-500/30">
+                    <span className="font-mono text-emerald-400 font-semibold">
+                      {inputWallet.slice(0, 6)}…{inputWallet.slice(-4)}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-emerald-400 hover:text-emerald-300"
+                      onClick={() => {
+                        navigator.clipboard.writeText(inputWallet);
+                        toast({ title: "Copied!", description: "Wallet address copied" });
+                      }}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                      onClick={() => setInputWallet("")}
+                    >
+                      Change wallet
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Input
+                      value={inputWallet}
+                      onChange={(e) => setInputWallet(e.target.value)}
+                      placeholder="0x..."
+                      className="font-mono bg-black/30 border-amber-500/30 focus:border-amber-400"
+                    />
+                  </div>
+                )}
 
                 <Button
                   onClick={handleClaim}
-                  className="w-full py-6 text-lg font-bold bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400"
+                  disabled={!inputWallet || !/^0x[a-fA-F0-9]{40}$/.test(inputWallet)}
+                  className="w-full py-6 text-lg font-bold bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 disabled:opacity-50"
                 >
                   Continue
                 </Button>
