@@ -12,6 +12,7 @@ import { BackgroundMusicPlayer } from "@/components/BackgroundMusicPlayer";
 import { Copy, QrCode, Share2 } from "lucide-react";
 import { Honobar } from "@/components/Layout/Honobar";
 import { GlassmorphismStats } from "@/components/Profile/GlassmorphismStats";
+import { RewardClaimSection } from "@/components/Profile/RewardClaimSection";
 import { QRCodeSVG } from "qrcode.react";
 import {
   DropdownMenu,
@@ -399,6 +400,9 @@ export default function Channel() {
         <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Glassmorphism Stats */}
           <GlassmorphismStats userId={channel.user_id} channelId={channel.id} />
+
+          {/* Reward Claim Section */}
+          <RewardClaimSection userId={channel.user_id} isOwnProfile={user?.id === channel.user_id} />
           
           <div className="flex items-start gap-6 mb-6">
             {profile?.avatar_url ? (
