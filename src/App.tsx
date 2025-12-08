@@ -26,9 +26,11 @@ import RewardHistory from "./pages/RewardHistory";
 import Referral from "./pages/Referral";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import NFTGallery from "./pages/NFTGallery";
 import { wagmiConfig } from '@/lib/web3Config';
 import { useCursorBeam } from './hooks/useCursorBeam';
 import { GlobalPaymentNotifications } from './components/Web3/GlobalPaymentNotifications';
+import { AIChatbot } from './components/AI/AIChatbot';
 
 const queryClient = new QueryClient();
 
@@ -38,6 +40,7 @@ function AppContent() {
   return (
     <>
       <GlobalPaymentNotifications />
+      <AIChatbot />
       <div>
         <Routes>
         <Route path="/" element={<Index />} />
@@ -63,6 +66,7 @@ function AppContent() {
         <Route path="/referral" element={<Referral />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/nft-gallery" element={<NFTGallery />} />
         <Route path="/install" element={<InstallPWA />} />
         {/* Temporary redirect routes for missing pages */}
         <Route path="/shorts" element={<Index />} />

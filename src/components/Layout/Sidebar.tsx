@@ -1,4 +1,4 @@
-import { Home, Zap, Users, Library, History, Video, Clock, ThumbsUp, Wallet, ListVideo, FileText, Tv, Trophy, Coins, UserPlus } from "lucide-react";
+import { Home, Zap, Users, Library, History, Video, Clock, ThumbsUp, Wallet, ListVideo, FileText, Tv, Trophy, Coins, UserPlus, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ const libraryItems = [
   { icon: Video, label: "Video của bạn", href: "/your-videos" },
   { icon: Clock, label: "Watch later", href: "/watch-later" },
   { icon: ThumbsUp, label: "Liked videos", href: "/liked" },
+  { icon: Image, label: "NFT Gallery", href: "/nft-gallery" },
 ];
 
 const manageItems = [
