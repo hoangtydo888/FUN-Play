@@ -34,7 +34,7 @@ export const AngelChat: React.FC<AngelChatProps> = ({ isOpen, onClose }) => {
     }
   }, [messages]);
 
-  const streamChat = async (userMessage: string) => {
+  const sendMessage = async (userMessage: string) => {
     setIsLoading(true);
     setIsTyping(true);
     
@@ -43,52 +43,32 @@ export const AngelChat: React.FC<AngelChatProps> = ({ isOpen, onClose }) => {
     setInput('');
 
     try {
-      const response = await supabase.functions.invoke('angel-chat', {
+      const { data, error } = await supabase.functions.invoke('angel-chat', {
         body: { messages: newMessages }
       });
 
-      if (response.error) throw new Error(response.error.message);
+      if (error) throw new Error(error.message);
 
-      // Handle streaming response
-      const reader = response.data.getReader?.();
-      if (reader) {
-        let assistantMessage = '';
-        setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-              try {
-                const json = JSON.parse(line.slice(6));
-                const content = json.choices?.[0]?.delta?.content;
-                if (content) {
-                  assistantMessage += content;
-                  setMessages(prev => {
-                    const updated = [...prev];
-                    updated[updated.length - 1] = { role: 'assistant', content: assistantMessage };
-                    return updated;
-                  });
-                }
-              } catch {}
-            }
-          }
-        }
-      } else {
-        // Non-streaming fallback
-        const data = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-        const content = data.choices?.[0]?.message?.content || data.content || 'Ôi! Mình hơi bối rối nè! Thử hỏi lại được không bạn? ♡';
-        setMessages(prev => [...prev, { role: 'assistant', content }]);
+      // Handle the new non-streaming response format (Grok -> ChatGPT -> Lovable AI)
+      const responseData = typeof data === 'string' ? JSON.parse(data) : data;
+      
+      // Check for error in response
+      if (responseData.error) {
+        throw new Error(responseData.error);
       }
+
+      // Get the response content - now supports new format with 'response' field
+      const content = responseData.response || 
+                     responseData.choices?.[0]?.message?.content || 
+                     'Ôi! Mình hơi bối rối nè! Thử hỏi lại được không bạn? ♡';
+      
+      // Log which AI provider responded
+      if (responseData.provider) {
+        console.log(`🌟 Angel powered by: ${responseData.provider}`);
+      }
+
+      setMessages(prev => [...prev, { role: 'assistant', content }]);
+      
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -103,7 +83,7 @@ export const AngelChat: React.FC<AngelChatProps> = ({ isOpen, onClose }) => {
 
   const handleSend = () => {
     if (input.trim() && !isLoading) {
-      streamChat(input.trim());
+      sendMessage(input.trim());
     }
   };
 
