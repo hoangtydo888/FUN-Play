@@ -26,6 +26,7 @@ import camlyCoinLogo from "@/assets/camly-coin-rainbow.png";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { requestNotificationPermission, showLocalNotification } from "@/lib/pushNotifications";
+import { SUPPORTED_TOKENS } from "@/config/tokens";
 
 interface TokenBalance {
   symbol: string;
@@ -34,33 +35,6 @@ interface TokenBalance {
   address: string;
   icon: string;
 }
-
-const SUPPORTED_TOKENS = [
-  { 
-    symbol: "BNB", 
-    address: "native", 
-    decimals: 18,
-    icon: "https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=035"
-  },
-  { 
-    symbol: "USDT", 
-    address: "0x55d398326f99059fF775485246999027B3197955", 
-    decimals: 18,
-    icon: "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=035"
-  },
-  { 
-    symbol: "CAMLY", 
-    address: "0x0910320181889fefde0bb1ca63962b0a8882e413", 
-    decimals: 18,
-    icon: "/images/camly-coin.png"
-  },
-  { 
-    symbol: "BTC", 
-    address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", 
-    decimals: 18,
-    icon: "https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=035"
-  },
-];
 
 const Wallet = () => {
   const [isConnected, setIsConnected] = useState(false);

@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { 
+  COINGECKO_IDS, 
+  PANCAKESWAP_ROUTER, 
+  CAMLY_TOKEN_ADDRESS, 
+  CAMLY_DECIMALS,
+  USDT_ADDRESS 
+} from "@/config/tokens";
 
 interface CryptoPrices {
   [key: string]: number;
 }
-
-const COINGECKO_IDS: { [key: string]: string } = {
-  BNB: "binancecoin",
-  USDT: "tether",
-  BTC: "bitcoin",
-};
-
-// PancakeSwap Router for CAMLY price fetching
-const PANCAKESWAP_ROUTER = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
-const CAMLY_TOKEN = "0x5A4623F305A8d7904ED68638AF3B4328678edDBf";
-const USDT_TOKEN = "0x55d398326f99059fF775485246999027B3197955";
 
 const ROUTER_ABI = [
   "function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)"
@@ -46,8 +42,8 @@ export const useCryptoPrices = () => {
           const provider = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
           const router = new ethers.Contract(PANCAKESWAP_ROUTER, ROUTER_ABI, provider);
           
-          const amountIn = ethers.parseUnits("1", 9); // 1 CAMLY (9 decimals)
-          const path = [CAMLY_TOKEN, USDT_TOKEN];
+          const amountIn = ethers.parseUnits("1", CAMLY_DECIMALS); // 1 CAMLY
+          const path = [CAMLY_TOKEN_ADDRESS, USDT_ADDRESS];
           
           const amounts = await router.getAmountsOut(amountIn, path);
           const usdtOut = ethers.formatUnits(amounts[1], 18); // USDT has 18 decimals

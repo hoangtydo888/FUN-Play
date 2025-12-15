@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowDownUp, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const PANCAKESWAP_ROUTER = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
+import { SWAP_TOKENS, PANCAKESWAP_ROUTER, TokenConfig } from "@/config/tokens";
 
 const ROUTER_ABI = [
   "function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)",
@@ -20,23 +19,9 @@ const ERC20_ABI = [
   "function allowance(address owner, address spender) public view returns (uint256)"
 ];
 
-interface Token {
-  symbol: string;
-  address: string;
-  decimals: number;
-  name: string;
-}
-
-const TOKENS: Token[] = [
-  { symbol: "BNB", address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", decimals: 18, name: "Binance Coin" }, // WBNB
-  { symbol: "USDT", address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18, name: "Tether USD" },
-  { symbol: "CAMLY", address: "0x5A4623F305A8d7904ED68638AF3B4328678edDBf", decimals: 9, name: "Camly Coin" },
-  { symbol: "BTC", address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", decimals: 18, name: "Bitcoin" }, // BTCB
-];
-
 export const TokenSwap = () => {
-  const [fromToken, setFromToken] = useState<Token>(TOKENS[1]); // USDT
-  const [toToken, setToToken] = useState<Token>(TOKENS[2]); // CAMLY
+  const [fromToken, setFromToken] = useState<TokenConfig>(SWAP_TOKENS[1]); // USDT
+  const [toToken, setToToken] = useState<TokenConfig>(SWAP_TOKENS[2]); // CAMLY
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
@@ -162,7 +147,7 @@ export const TokenSwap = () => {
           <Select
             value={fromToken.symbol}
             onValueChange={(value) => {
-              const token = TOKENS.find(t => t.symbol === value);
+              const token = SWAP_TOKENS.find(t => t.symbol === value);
               if (token) setFromToken(token);
             }}
           >
@@ -170,7 +155,7 @@ export const TokenSwap = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {TOKENS.map((token) => (
+              {SWAP_TOKENS.map((token) => (
                 <SelectItem key={token.symbol} value={token.symbol}>
                   {token.symbol} - {token.name}
                 </SelectItem>
@@ -204,7 +189,7 @@ export const TokenSwap = () => {
           <Select
             value={toToken.symbol}
             onValueChange={(value) => {
-              const token = TOKENS.find(t => t.symbol === value);
+              const token = SWAP_TOKENS.find(t => t.symbol === value);
               if (token) setToToken(token);
             }}
           >
@@ -212,7 +197,7 @@ export const TokenSwap = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {TOKENS.map((token) => (
+              {SWAP_TOKENS.map((token) => (
                 <SelectItem key={token.symbol} value={token.symbol}>
                   {token.symbol} - {token.name}
                 </SelectItem>
