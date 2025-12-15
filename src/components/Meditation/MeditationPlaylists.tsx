@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Music, Star, Play, MoreVertical, Edit2, Trash2, GripVertical, Save, X } from "lucide-react";
+import { Plus, Music, Star, Play, MoreVertical, Edit2, Trash2, Save, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { DraggableVideoList } from "./DraggableVideoList";
 
 interface MeditationPlaylist {
   id: string;
@@ -56,9 +57,42 @@ export const MeditationPlaylists = () => {
     if (error) {
       console.error("Error fetching playlists:", error);
     } else {
-      setPlaylists(data || []);
+      // Check if featured playlist exists, if not create it
+      const hasFeatured = data?.some(p => p.is_featured && p.name === "Meditate with Father Universe");
+      if (!hasFeatured) {
+        await createFeaturedPlaylist();
+        // Refetch after creating
+        const { data: refreshedData } = await supabase
+          .from("meditation_playlists")
+          .select("*")
+          .order("is_featured", { ascending: false })
+          .order("created_at", { ascending: false });
+        setPlaylists(refreshedData || []);
+      } else {
+        setPlaylists(data || []);
+      }
     }
     setIsLoading(false);
+  };
+
+  const createFeaturedPlaylist = async () => {
+    // Get admin user or first user for the featured playlist
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser) return;
+
+    const { error } = await supabase
+      .from("meditation_playlists")
+      .insert({
+        user_id: currentUser.id,
+        name: "Meditate with Father Universe",
+        description: "Bộ sưu tập thiền định đặc biệt từ Father Universe. Hành trình chữa lành tâm hồn và kết nối với ánh sáng vũ trụ vô tận.",
+        is_featured: true,
+        thumbnail_url: null,
+      });
+
+    if (error) {
+      console.error("Error creating featured playlist:", error);
+    }
   };
 
   const fetchPlaylistVideos = async (playlistId: string) => {
@@ -167,28 +201,12 @@ export const MeditationPlaylists = () => {
     }
   };
 
-  const moveVideo = async (index: number, direction: 'up' | 'down') => {
-    const newVideos = [...playlistVideos];
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    
-    if (newIndex < 0 || newIndex >= newVideos.length) return;
-    
-    [newVideos[index], newVideos[newIndex]] = [newVideos[newIndex], newVideos[index]];
-    
-    // Update positions
-    newVideos.forEach((video, i) => {
-      video.position = i;
-    });
-    
-    setPlaylistVideos(newVideos);
-    
-    // Save to database
-    for (const video of newVideos) {
-      await supabase
-        .from("meditation_playlist_videos")
-        .update({ position: video.position })
-        .eq("id", video.id);
-    }
+  const handleVideoReorder = (newOrder: PlaylistVideo[]) => {
+    setPlaylistVideos(newOrder);
+  };
+
+  const handleVideoRemove = (videoId: string) => {
+    setPlaylistVideos(playlistVideos.filter(v => v.id !== videoId));
   };
 
   const openEditPlaylist = async (playlist: MeditationPlaylist) => {
@@ -315,49 +333,19 @@ export const MeditationPlaylists = () => {
                 />
               </div>
 
-              {/* Video Reorder Section */}
+              {/* Video Reorder Section with Drag & Drop */}
               <div>
                 <label className="text-sm text-amber-700 mb-2 block flex items-center gap-2">
-                  <GripVertical className="w-4 h-4" />
-                  Sắp xếp thứ tự video (kéo thả)
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  Sắp xếp thứ tự video (kéo thả để sắp xếp)
                 </label>
-                <div className="space-y-2 max-h-60 overflow-y-auto border border-amber-200 rounded-lg p-2">
-                  {playlistVideos.length === 0 ? (
-                    <p className="text-amber-500 text-sm text-center py-4">Chưa có video trong playlist</p>
-                  ) : (
-                    playlistVideos.map((pv, index) => (
-                      <div
-                        key={pv.id}
-                        className="flex items-center gap-2 p-2 bg-amber-50 rounded-lg border border-amber-100"
-                      >
-                        <div className="flex flex-col gap-1">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-5 w-5 p-0"
-                            onClick={() => moveVideo(index, 'up')}
-                            disabled={index === 0}
-                          >
-                            ▲
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-5 w-5 p-0"
-                            onClick={() => moveVideo(index, 'down')}
-                            disabled={index === playlistVideos.length - 1}
-                          >
-                            ▼
-                          </Button>
-                        </div>
-                        <span className="text-amber-600 text-sm w-6">{index + 1}.</span>
-                        {pv.video?.thumbnail_url && (
-                          <img src={pv.video.thumbnail_url} alt="" className="w-12 h-8 object-cover rounded" />
-                        )}
-                        <span className="text-amber-800 text-sm flex-1 truncate">{pv.video?.title || "Video"}</span>
-                      </div>
-                    ))
-                  )}
+                <div className="max-h-80 overflow-y-auto border border-amber-200 rounded-xl p-3 bg-gradient-to-br from-amber-50/50 to-yellow-50/50">
+                  <DraggableVideoList
+                    videos={playlistVideos}
+                    onReorder={handleVideoReorder}
+                    onRemove={handleVideoRemove}
+                    playlistId={editingPlaylist.id}
+                  />
                 </div>
               </div>
 

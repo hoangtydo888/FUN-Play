@@ -6,6 +6,7 @@ import { MeditationPlayer } from "@/components/Meditation/MeditationPlayer";
 import { MeditationPlaylists } from "@/components/Meditation/MeditationPlaylists";
 import { LightParticles } from "@/components/Meditation/LightParticles";
 import { MeditatingAngel } from "@/components/Meditation/MeditatingAngel";
+import { AmbientSoundSelector } from "@/components/Meditation/AmbientSoundSelector";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Play, Clock, Infinity, Moon, Sparkles } from "lucide-react";
@@ -165,6 +166,11 @@ const Meditate = () => {
                 </Button>
               ))}
             </div>
+          </div>
+
+          {/* Ambient Sound Selector */}
+          <div className="mb-8 max-w-xl mx-auto">
+            <AmbientSoundSelector />
           </div>
 
           {/* Tabs */}
