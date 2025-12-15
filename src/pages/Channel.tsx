@@ -275,10 +275,7 @@ export default function Channel() {
           .eq("channel_id", channel.id)
           .eq("subscriber_id", user.id);
 
-        await supabase
-          .from("channels")
-          .update({ subscriber_count: (channel?.subscriber_count || 1) - 1 })
-          .eq("id", channel.id);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(false);
       } else {
@@ -287,10 +284,7 @@ export default function Channel() {
           subscriber_id: user.id,
         });
 
-        await supabase
-          .from("channels")
-          .update({ subscriber_count: (channel?.subscriber_count || 0) + 1 })
-          .eq("id", channel.id);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(true);
       }

@@ -65,10 +65,7 @@ export const MiniProfileCard = ({
           .eq("channel_id", channelId)
           .eq("subscriber_id", user.id);
 
-        await supabase
-          .from("channels")
-          .update({ subscriber_count: Math.max(0, subscriberCount - 1) })
-          .eq("id", channelId);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(false);
         toast({
@@ -81,10 +78,7 @@ export const MiniProfileCard = ({
           subscriber_id: user.id,
         });
 
-        await supabase
-          .from("channels")
-          .update({ subscriber_count: subscriberCount + 1 })
-          .eq("id", channelId);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(true);
         toast({

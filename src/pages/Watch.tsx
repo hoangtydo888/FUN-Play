@@ -380,12 +380,7 @@ export default function Watch() {
           .eq("channel_id", video.channels.id)
           .eq("subscriber_id", user.id);
 
-        await supabase
-          .from("channels")
-          .update({
-            subscriber_count: Math.max(0, (video.channels.subscriber_count || 1) - 1),
-          })
-          .eq("id", video.channels.id);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(false);
         toast({
@@ -398,12 +393,7 @@ export default function Watch() {
           subscriber_id: user.id,
         });
 
-        await supabase
-          .from("channels")
-          .update({
-            subscriber_count: (video.channels.subscriber_count || 0) + 1,
-          })
-          .eq("id", video.channels.id);
+        // subscriber_count is updated automatically by database trigger
 
         setIsSubscribed(true);
         toast({
