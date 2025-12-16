@@ -9,8 +9,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Maximum file size: 500MB
-const MAX_FILE_SIZE = 500 * 1024 * 1024;
+// Maximum file size: 10GB
+const MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024;
 
 serve(async (req) => {
   // Handle CORS preflight requests
