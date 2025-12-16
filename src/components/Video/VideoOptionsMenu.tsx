@@ -15,6 +15,7 @@ import {
   Plus,
   Check,
   Sparkles,
+  LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
+import { ShareModal } from "./ShareModal";
 import confetti from "canvas-confetti";
 
 interface VideoOptionsMenuProps {
@@ -65,6 +67,7 @@ export const VideoOptionsMenu = ({
   const { toast } = useToast();
   const { addToQueue } = useMusicPlayer();
   const [showNewPlaylistDialog, setShowNewPlaylistDialog] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loadingPlaylists, setLoadingPlaylists] = useState(false);
@@ -379,26 +382,45 @@ export const VideoOptionsMenu = ({
               <span className="text-foreground">Lưu vào playlist</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="w-56 bg-background/95 backdrop-blur-xl border-glow-gold/20 shadow-[0_0_30px_rgba(255,215,0,0.2)] rounded-xl">
-              {loadingPlaylists ? (
+              {!user ? (
+                <div className="p-4 text-center">
+                  <LogIn className="h-8 w-8 mx-auto mb-2 text-cosmic-cyan" />
+                  <p className="text-sm text-muted-foreground mb-2">Đăng nhập để lưu video</p>
+                </div>
+              ) : loadingPlaylists ? (
                 <div className="p-4 text-center text-muted-foreground">
                   <Sparkles className="h-5 w-5 animate-spin mx-auto mb-2" />
                   Đang tải...
                 </div>
               ) : (
                 <>
-                  {playlists.map((playlist) => (
-                    <DropdownMenuItem
-                      key={playlist.id}
-                      onClick={() => handleSaveToPlaylist(playlist.id, playlist.name)}
-                      className="flex items-center gap-3 py-2 px-3 cursor-pointer hover:bg-glow-gold/10 transition-colors"
-                    >
-                      <FolderPlus className="h-4 w-4 text-glow-gold" />
-                      <span className="truncate">{playlist.name}</span>
-                    </DropdownMenuItem>
-                  ))}
+                  {playlists.length === 0 ? (
+                    <div className="p-3 text-center text-sm text-muted-foreground">
+                      Chưa có playlist nào
+                    </div>
+                  ) : (
+                    playlists.map((playlist) => (
+                      <DropdownMenuItem
+                        key={playlist.id}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleSaveToPlaylist(playlist.id, playlist.name);
+                        }}
+                        className="flex items-center gap-3 py-2 px-3 cursor-pointer hover:bg-glow-gold/10 transition-colors"
+                      >
+                        <FolderPlus className="h-4 w-4 text-glow-gold" />
+                        <span className="truncate">{playlist.name}</span>
+                      </DropdownMenuItem>
+                    ))
+                  )}
                   <DropdownMenuSeparator className="bg-glow-gold/20" />
                   <DropdownMenuItem
-                    onClick={() => setShowNewPlaylistDialog(true)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowNewPlaylistDialog(true);
+                    }}
                     className="flex items-center gap-3 py-2 px-3 cursor-pointer hover:bg-cosmic-magenta/10 transition-colors"
                   >
                     <Plus className="h-4 w-4 text-cosmic-magenta" />
@@ -427,15 +449,21 @@ export const VideoOptionsMenu = ({
             <span className="text-foreground">Nhúng video</span>
           </DropdownMenuItem>
 
-          {onShare && (
-            <DropdownMenuItem
-              onClick={onShare}
-              className="flex items-center gap-3 py-3 px-4 cursor-pointer hover:bg-cosmic-cyan/10 transition-colors group"
-            >
-              <Share2 className="h-5 w-5 text-cosmic-cyan group-hover:scale-110 transition-transform" />
-              <span className="text-foreground">Chia sẻ</span>
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onShare) {
+                onShare();
+              } else {
+                setShowShareModal(true);
+              }
+            }}
+            className="flex items-center gap-3 py-3 px-4 cursor-pointer hover:bg-cosmic-cyan/10 transition-colors group"
+          >
+            <Share2 className="h-5 w-5 text-cosmic-cyan group-hover:scale-110 transition-transform" />
+            <span className="text-foreground">Chia sẻ</span>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator className="bg-muted" />
 
@@ -499,6 +527,15 @@ export const VideoOptionsMenu = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        videoId={videoId}
+        videoTitle={videoTitle}
+        userId={user?.id}
+      />
     </>
   );
 };
