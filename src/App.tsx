@@ -34,6 +34,7 @@ import { useCursorBeam } from './hooks/useCursorBeam';
 import { GlobalPaymentNotifications } from './components/Web3/GlobalPaymentNotifications';
 import { AngelMascot } from './components/Mascot/AngelMascot';
 import { MusicPlayerProvider } from './contexts/MusicPlayerContext';
+import { VideoPlaybackProvider } from './contexts/VideoPlaybackContext';
 import { EnhancedMusicPlayer } from './components/Video/EnhancedMusicPlayer';
 
 const queryClient = new QueryClient();
@@ -96,10 +97,12 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <MusicPlayerProvider>
-          <BrowserRouter>
-            <AppContent />
-            <EnhancedMusicPlayer />
-          </BrowserRouter>
+          <VideoPlaybackProvider>
+            <BrowserRouter>
+              <AppContent />
+              <EnhancedMusicPlayer />
+            </BrowserRouter>
+          </VideoPlaybackProvider>
         </MusicPlayerProvider>
       </TooltipProvider>
     </QueryClientProvider>
