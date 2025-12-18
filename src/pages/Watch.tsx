@@ -15,6 +15,7 @@ import { awardViewReward, awardLikeReward, logAndRewardComment, awardShareReward
 import { RewardNotification } from "@/components/Rewards/RewardNotification";
 import { useVideoPlayback } from "@/contexts/VideoPlaybackContext";
 import { UpNextSidebar } from "@/components/Video/UpNextSidebar";
+import { EnhancedVideoPlayer } from "@/components/Video/EnhancedVideoPlayer";
 
 interface Video {
   id: string;
@@ -77,7 +78,7 @@ export default function Watch() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { createSession, nextVideo, isAutoplayEnabled, session } = useVideoPlayback();
+  const { createSession, nextVideo, previousVideo, isAutoplayEnabled, session, getUpNext } = useVideoPlayback();
 
   useEffect(() => {
     if (id) {
@@ -511,15 +512,22 @@ export default function Watch() {
             {/* Main Content */}
             <div className="space-y-4">
               {/* Video Player */}
-              <div className="aspect-video bg-black rounded-xl overflow-hidden">
-                <video
-                  src={video.video_url}
-                  controls
-                  className="w-full h-full"
-                  autoPlay
-                  onEnded={handleVideoEnd}
-                />
-              </div>
+              <EnhancedVideoPlayer
+                videoUrl={video.video_url}
+                videoId={video.id}
+                title={video.title}
+                onEnded={handleVideoEnd}
+                onPrevious={() => {
+                  const prev = previousVideo();
+                  if (prev) navigate(`/watch/${prev.id}`);
+                }}
+                onNext={() => {
+                  const next = nextVideo();
+                  if (next) navigate(`/watch/${next.id}`);
+                }}
+                hasPrevious={session?.history && session.history.length > 1}
+                hasNext={getUpNext(1).length > 0}
+              />
 
               {/* Video Title */}
               <h1 className="text-xl font-bold text-foreground">
