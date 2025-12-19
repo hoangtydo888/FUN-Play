@@ -6,19 +6,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Reward amounts - server-side source of truth
+// Reward amounts - server-side source of truth (as specified by Father Universe)
 const REWARD_AMOUNTS = {
-  VIEW: 500,
-  LIKE: 500,
-  COMMENT: 5000,
-  SHARE: 2000,
-  UPLOAD: 50000,
+  VIEW: 10000,           // Watch video: +10,000 CAMLY
+  LIKE: 5000,            // Like: +5,000 CAMLY
+  COMMENT: 5000,         // Comment (min 5 words): +5,000 CAMLY
+  SHARE: 5000,           // Share: +5,000 CAMLY
+  UPLOAD: 100000,        // Quality video upload: +100,000 CAMLY
+  FIRST_UPLOAD: 500000,  // First video upload: +500,000 CAMLY
+  SIGNUP: 50000,         // Sign up: +50,000 CAMLY
+  WALLET_CONNECT: 50000, // Connect wallet: +50,000 CAMLY
 };
 
 // Daily limits - enforced server-side
 const DAILY_LIMITS = {
-  VIEW_REWARDS: 50000,
-  COMMENT_REWARDS: 25000,
+  VIEW_REWARDS: 100000,   // 10 videos per day max
+  COMMENT_REWARDS: 50000, // 10 comments per day max
   UPLOAD_COUNT: 10,
 };
 
@@ -60,7 +63,7 @@ serve(async (req) => {
     const { type, videoId } = await req.json();
 
     // 4. Validate reward type
-    const validTypes = ['VIEW', 'LIKE', 'COMMENT', 'SHARE', 'UPLOAD'];
+    const validTypes = ['VIEW', 'LIKE', 'COMMENT', 'SHARE', 'UPLOAD', 'FIRST_UPLOAD', 'SIGNUP', 'WALLET_CONNECT'];
     if (!validTypes.includes(type)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid reward type' }),
